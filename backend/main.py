@@ -1,3 +1,4 @@
+# source venv/Scripts/activate
 # uvicorn main:app
 # uvicorn main:app --reload
 
@@ -9,7 +10,9 @@ from decouple import config
 import openai
 
 # Custom function imports
+from functions.database import store_message, reset_messages
 from functions.openai_requests import convert_audio_to_text, get_chat_response
+from functions.text_to_speech import convert_text_to_speech
 
 
 # Get Environment Vars
@@ -42,6 +45,12 @@ app.add_middleware(
 async def root():
     return {"message": "Hello World"}
 
+# Reset Messages
+@app.get("/reset-messages")
+async def reset_conversation():
+    reset_messages()
+    return {"message": "all conversation reset "}
+
 @app.get("/post-audio/")
 async def get_audio():
 
@@ -58,6 +67,24 @@ async def get_audio():
     # Get chat response
     chat_response = get_chat_response(message_decoded)
 
-    print(chat_response)
+    # Guard: Ensure output
+    if not chat_response:
+        return HTTPException(status_code=400, detail="Failed to chat response")
+
+    # store_messages
+    store_message(message_decoded, chat_response)
+
+    audio_output = convert_text_to_speech(chat_response)
+
+    # Guard: Ensure output
+    if not audio_output:
+        return HTTPException(status_code=400, detail="Failed to audio output")
     
+   # Create a generator that yields chunks of data
+    def iterfile():
+        yield audio_output
+
+    # Use for Post: Return output audio
+    return StreamingResponse(iterfile(), media_type="application/octet-stream")
+
     return "Done"
