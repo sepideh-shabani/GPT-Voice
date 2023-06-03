@@ -7,19 +7,9 @@ import HelloAnimation from "./HelloAnimation";
 export const Controllers = () => {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
-  const [blob, setBlob] = useState("");
 
-  const createUrl = (data: any) => {
-    const blob = new Blob([data], { type: "audio/mpeg" });
-    const url = window.URL.createObjectURL(blob);
-    return url;
-  };
-
-  console.log("messages", messages);
   const handleStop = async (blobUrl: string) => {
-    console.log("AAAAAAAAAAAAAAA");
     setLoading(true);
-
     const myMessage = { sender: "Me", blobUrl };
     const messageArr = [...messages, myMessage];
 
@@ -53,7 +43,7 @@ export const Controllers = () => {
   return (
     <div className="h-screen overflow-y-hidden">
       <Title setMessages={setMessages} />
-      <div className="flex flex-col justify-between h-full overflow-y-scroll">
+      <div className="flex flex-col justify-between overflow-y-scroll h-[calc(100%_-_17%)]">
         <div className="my-2 px-3">
           {messages.map((msg, index) => {
             return (
@@ -67,7 +57,7 @@ export const Controllers = () => {
                 <div className="mt-1">
                   <p
                     className={
-                      "font-bold text-base " +
+                      "text-base " +
                       (msg.sender === "Rachel"
                         ? "text-right mr-1 italic text-green-600"
                         : "ml-1 italic text-blue-600")
@@ -76,7 +66,7 @@ export const Controllers = () => {
                     {msg.sender}
                   </p>
                   {msg.sender === "Rachel" ? (
-                    <p className="bg-gray-200 p-2 rounded-lg text-base">
+                    <p className="bg-gray-100 p-2 rounded-lg text-base">
                       {msg.blobUrl}
                     </p>
                   ) : (
@@ -90,10 +80,19 @@ export const Controllers = () => {
               </div>
             );
           })}
-          {messages.length == 0 && !loading && <HelloAnimation />}
+          {messages.length == 0 && !loading && (
+            <div className="flex justify-center">
+              <HelloAnimation />
+            </div>
+          )}
+          {loading && (
+            <div className="text-center font-light italic mt-10 animate-pulse">
+              Give a second ....
+            </div>
+          )}
         </div>
       </div>
-      <div className="fixed bottom-0 w-full py-4 border-t text-center bg-gradient-to-r from-sky-500 to-green-400">
+      <div className="fixed bottom-0 w-full py-1 h-1/7 text-center bg-gradient-to-r from-sky-800 to-blue-800">
         <div className="flex justify-center items-center w-full">
           <RecordMessage handleStop={handleStop} />
         </div>
