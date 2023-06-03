@@ -1,36 +1,27 @@
 import requests
-from decouple import config
 
-ELEVEN_LABS_API_KEY = config("ELEVEN_LABS_API_KEY")
+api_key = "2c631dba-489b-4773-9ac3-ece8172bbca1"
 
-# Eleven Labs
-# Convert text to speech
-def convert_text_to_speech(message):
-    body = {
-    "text": message,
-    "voice_settings": {
-        "stability": 0,
-        "similarity_boost": 0
-    }
+def convert_text_to_speech():
+
+
+    url = 'https://developer.voicemaker.in/voice/api'
+
+    headers = {
+   "Authorization": "Bearer a9933800-01da-11ee-901a-3d3220f7323a",
+    "content-type": "application/json"
     }
 
-    voice_shaun = "mTSvIrm2hmcnOvb21nW2"
-    voice_rachel = "21m00Tcm4TlvDq8ikWAM"
-    voice_antoni = "ErXwobaYiN019PkySvjV"
+    payload = {
+        "Engine": "neural", "VoiceId": "ai3-Jony", 
+        "LanguageCode": "en-US",
+        "Text": "Welcome to the Air.",
+        "OutputFormat": "mp3",
+        "SampleRate": "48000",
+        "Effect": "default", "MasterSpeed": "0", "MasterVolume": "0",
+        "MasterPitch": "0" 
+        }
 
-    # Construct request headers and endpoint
-    headers = { "xi-api-key": ELEVEN_LABS_API_KEY, "Content-Type": "application/json", "accept": "audio/mpeg" }
-    endpoint = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_rachel}"
-
-    try:
-        response = requests.post(endpoint, json=body, headers=headers)
-
-    except Exception as e:
-        print(e)
-        return
-  
-    # Handle Response
-    if response.status_code == 200:
-        return response.content
-    else:
-        return
+    r = requests.post(url, json=payload, headers=headers)
+    data = r.json()
+    print(data)

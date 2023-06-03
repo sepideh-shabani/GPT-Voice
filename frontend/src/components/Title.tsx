@@ -13,7 +13,6 @@ export const Title = ({ setMessages }: TitleProps) => {
       .get("http://127.0.0.1:8000/reset-messages")
       .then((res) => {
         if (res.status == 200) {
-          alert(res.data.message);
           setMessages([]);
         } else {
           console.error("we receive an error");
